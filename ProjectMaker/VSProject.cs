@@ -33,9 +33,17 @@ internal class VSProject
 {
     public string ProjectContent;
     public string ProjectFilterContent;
-    public string PrecompiledHeader;
-    public string PrecompiledSource;
-    public Module module;
+	public string AutoDefinitions;
+	public string AutoDefinitionsRelativeDirectory
+    {
+        get
+        {
+            return $"{ProjectMaker.IntermediateIncludesDirectory}{module.Name}\\AutoDefinitions{module.Name}.h";
+
+		}
+    }
+
+	public Module module;
 
 
 
@@ -55,13 +63,9 @@ internal class VSProject
 		{
 			writer.Write(ProjectFilterContent);
 		}
-        using (StreamWriter writer = new StreamWriter($"{SoultionDirectory}{ProjectMaker.IntermediateIncludesDirectory}{module.Name}\\{module.Name}pch.h", false, Encoding.Unicode))
+        using (StreamWriter writer = new StreamWriter($"{SoultionDirectory}{AutoDefinitionsRelativeDirectory}", false, Encoding.Unicode))
         {
-            writer.Write(PrecompiledHeader);
-        }
-        using (StreamWriter writer = new StreamWriter($"{SoultionDirectory}{ProjectMaker.IntermediateIncludesDirectory}{module.Name}\\{module.Name}pch.cpp", false, Encoding.Unicode))
-        {
-            writer.Write(PrecompiledSource);
+            writer.Write(AutoDefinitions);
         }
     }
 }

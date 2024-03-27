@@ -24,12 +24,12 @@ internal class VSProjectFileCreater
     public static VSProject CreateProject(Module module)
     {
         VSProject project = new VSProject();
+		project.module = module;
 
 
-        MakeProjectFile(project, module);
+		MakeProjectFile(project, module);
         MakeProjectFilterFile(project, module);
-        MakePrecompiledHeader(project, module);
-        MakePrecompiledSource(project, module);
+        MakeAutoDefines(project, module);
 
         return project;
 
@@ -177,13 +177,14 @@ internal class VSProjectFileCreater
 
             sb.AppendLine($"\t\t<PreprocessorDefinitions>{PreprocessorDefinitions}</PreprocessorDefinitions>");
             sb.AppendLine($"\t\t<ConformanceMode>false</ConformanceMode>");
-            sb.AppendLine($"\t\t<PrecompiledHeader>Create</PrecompiledHeader>");
-            sb.AppendLine($"\t\t<PrecompiledHeaderFile>{module.Name}pch.h</PrecompiledHeaderFile>");
-            sb.AppendLine($"\t\t<LanguageStandard>stdcpp20</LanguageStandard>");
+			sb.AppendLine($"\t\t<ForcedIncludeFiles>$(SolutionDir){ProjectFile.AutoDefinitionsRelativeDirectory};%(ForcedIncludeFiles)</ForcedIncludeFiles>");
+
+			sb.AppendLine($"\t\t<LanguageStandard>stdcpp20</LanguageStandard>");
             sb.AppendLine($"\t</ClCompile>");
+			//ForcedIncludeFiles
+			//ConformanceMode
 
-
-            sb.AppendLine($"\t<Link>");
+			sb.AppendLine($"\t<Link>");
 
 
             /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -253,10 +254,6 @@ internal class VSProjectFileCreater
             sb.AppendLine($"\t\t<ClCompile Include=\"../../{RelaiveDirectory}{item}\" />");
         }
         
-        sb.AppendLine($"\t\t<ClCompile Include=\"../Includes\\{module.Name}\\{module.Name}pch.cpp\" >");
-        sb.AppendLine("\t\t\t<PrecompiledHeader Condition=\"'$(Configuration)|$(Platform)'=='Debug|x64'\">Create</PrecompiledHeader>");
-        sb.AppendLine("\t\t\t<PrecompiledHeader Condition=\"'$(Configuration)|$(Platform)'=='Release|x64'\">Create</PrecompiledHeader>");
-        sb.AppendLine("</ClCompile>");
 
 
         sb.AppendLine("\t</ItemGroup>");
@@ -324,9 +321,7 @@ internal class VSProjectFileCreater
 			}
 			sb.AppendLine($"    </ClCompile>");
         }
-        sb.AppendLine($"    <ClCompile Include=\"../Includes\\{module.Name}\\{module.Name}pch.cpp\">");
-        sb.AppendLine($"      <Filter>AutomaticGeneration</Filter>");
-        sb.AppendLine($"    </ClCompile>");
+
         sb.AppendLine("  </ItemGroup>");
 		sb.AppendLine("  <ItemGroup>");
 
@@ -340,40 +335,19 @@ internal class VSProjectFileCreater
 			sb.AppendLine($"    </ClInclude>");
         }
 
-        sb.AppendLine($"    <ClInclude Include=\"../Includes\\{module.Name}\\{module.Name}pch.h\">");
-        sb.AppendLine($"      <Filter>AutomaticGeneration</Filter>");
-        sb.AppendLine($"    </ClInclude>");
 
         sb.AppendLine("  </ItemGroup>");
 		sb.AppendLine("</Project>");
 		ProjectFile.ProjectFilterContent = sb.ToString();
     }
 
-    private static void MakeModuleAPI(StringBuilder sb, string moduleName)
-    {
-        sb.AppendLine($"#ifdef {moduleName}_EXPORTS");
-        sb.AppendLine($"#define {moduleName}MODULEAPI __declspec(dllexport)");
-        sb.AppendLine($"#else ");
-        sb.AppendLine($"#define {moduleName}MODULEAPI __declspec(dllimport)");
-        sb.AppendLine($"#endif // {moduleName}_EXPORTS");
-    }
-    public static void MakePrecompiledHeader(VSProject ProjectFile, Module module)
+    public static void MakeAutoDefines(VSProject ProjectFile, Module module)
     {
         string moduleNameUpper = module.Name.ToUpper();
         StringBuilder sb = new StringBuilder();
         sb.AppendLine($"");
-        sb.AppendLine($"// pch.h: 미리 컴파일된 헤더 파일입니다.");
-        sb.AppendLine($"// 아래 나열된 파일은 한 번만 컴파일되었으며, 향후 빌드에 대한 빌드 성능을 향상합니다.");
-        sb.AppendLine($"// 코드 컴파일 및 여러 코드 검색 기능을 포함하여 IntelliSense 성능에도 영향을 미칩니다.");
-        sb.AppendLine($"// 그러나 여기에 나열된 파일은 빌드 간 업데이트되는 경우 모두 다시 컴파일됩니다.");
-        sb.AppendLine($"// 여기에 자주 업데이트할 파일을 추가하지 마세요. 그러면 성능이 저하됩니다.");
-        sb.AppendLine($"");
-        sb.AppendLine($"#ifndef {moduleNameUpper}PCH_H");
-        sb.AppendLine($"#define {moduleNameUpper}PCH_H");
-        sb.AppendLine($"// 여기에 미리 컴파일하려는 헤더 추가");
-        sb.AppendLine($"");
+        //?
         sb.AppendLine($"#define WIN32_LEAN_AND_MEAN             // 거의 사용되지 않는 내용을 Windows 헤더에서 제외합니다.");
-        sb.AppendLine($"// Windows 헤더 파일");
         sb.AppendLine($"#include <windows.h>");
         sb.AppendLine($"");
 
@@ -387,22 +361,9 @@ internal class VSProjectFileCreater
             //MakeModuleAPI(sb, linkModuleName.ToUpper());
         }
 
-        sb.AppendLine($"#endif //{moduleNameUpper}PCH_H");
         sb.AppendLine($"");
 
-        ProjectFile.PrecompiledHeader = sb.ToString();
-    }
-
-
-    public static void MakePrecompiledSource(VSProject ProjectFile, Module module)
-    {
-        StringBuilder sb = new StringBuilder();
-        sb.AppendLine($"// pch.cpp: 미리 컴파일된 헤더에 해당하는 소스 파일");
-        sb.AppendLine($"");
-        sb.AppendLine($"#include \"{module.Name}pch.h\"");
-        sb.AppendLine($"");
-        sb.AppendLine($"// 미리 컴파일된 헤더를 사용하는 경우 컴파일이 성공하려면 이 소스 파일이 필요합니다.");
-        ProjectFile.PrecompiledSource = sb.ToString();
+        ProjectFile.AutoDefinitions = sb.ToString();
     }
 
     public static string ConvertFilePathToFilterPath(string filePath, string projectDirectory)
@@ -436,20 +397,20 @@ internal class VSProjectFileCreater
         {
             string relativePath = ModuleScanner.GetRelativePath(solution.FilePath, project.module.ProjectDirectory + project.module.Name + ".vcxproj");
             sb.AppendLine($"Project(\"8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942\") = \"{project.module.Name}\", \"{relativePath}\", \"{{{project.module.GUID}}}\"");
-            //if (project.Dependencies.Count > 0)
-            //{
-            //    sb.AppendLine("\tProjectSection(ProjectDependencies) = postProject");
-            //    foreach (var dependency in project.Dependencies)
-            //    {
-            //        sb.AppendLine($"\t\t{dependency} = {dependency}");
-            //    }
-            //    sb.AppendLine("\tEndProjectSection");
-            //}
+            if (project.module.Name == "Application")
+            {
+                sb.AppendLine("\tProjectSection(ProjectDependencies) = postProject");
+                foreach (var dependencyProject in projects)
+                {
+                    sb.AppendLine($"\t\t{dependencyProject.module.GUID} = {dependencyProject.module.GUID}");
+                }
+                sb.AppendLine("\tEndProjectSection");
+            }
             sb.AppendLine("EndProject");
         }
 
-        // Write global section
-        sb.AppendLine("Global");
+		// Write global section
+		sb.AppendLine("Global");
         sb.AppendLine("\tGlobalSection(SolutionConfigurationPlatforms) = preSolution");
         sb.AppendLine("\t\tDebug|x64 = Debug|x64");
         sb.AppendLine("\t\tRelease|x64 = Release|x64");
