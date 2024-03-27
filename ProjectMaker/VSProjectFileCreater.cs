@@ -1,9 +1,11 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.Design;
 using System.Configuration;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
+using System.Runtime.CompilerServices;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -387,7 +389,8 @@ internal class VSProjectFileCreater
 
         StringBuilder sb = new StringBuilder();
 
-        sb.AppendLine("Microsoft Visual Studio Solution File, Format Version 12.00");
+
+		sb.AppendLine("Microsoft Visual Studio Solution File, Format Version 12.00");
         sb.AppendLine("# Visual Studio Version 17");
         sb.AppendLine("VisualStudioVersion = 17.9.34622.214");
         sb.AppendLine("MinimumVisualStudioVersion = 10.0.40219.1");
@@ -406,6 +409,22 @@ internal class VSProjectFileCreater
                 }
                 sb.AppendLine("\tEndProjectSection");
             }
+            else if(project.module.LinkModuleName.Count > 0)
+            {
+				sb.AppendLine("\tProjectSection(ProjectDependencies) = postProject");
+				foreach (var dlls in project.module.LinkModuleName)
+				{
+					var temp = from projectEle in projects
+							   where projectEle.module.Name == dlls
+							   select projectEle.module.GUID;
+
+                    foreach (var item in temp)
+					{
+						sb.AppendLine($"\t\t{item} = {item}");
+					}
+				}
+				sb.AppendLine("\tEndProjectSection");
+			}
             sb.AppendLine("EndProject");
         }
 
