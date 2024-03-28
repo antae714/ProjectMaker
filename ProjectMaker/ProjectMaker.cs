@@ -41,6 +41,8 @@ internal class ProjectMaker
 
                 ProjectMake(basePath);
 
+                Console.WriteLine("끝");
+                Console.ReadKey();
                 break;
             case "-prebuild":
                 PreBuild();
@@ -49,7 +51,6 @@ internal class ProjectMaker
                 Console.WriteLine("잘못된 인수입니다. -Setup 또는 -PreBuild를 사용하세요.");
                 break;
         }
-
 
 
     }
@@ -73,7 +74,7 @@ internal class ProjectMaker
 
     static void PreBuild()
     {
-        Console.WriteLine("-PreBuild합니다.");
+        Console.WriteLine("-PreBuild합니다. 추가 예정");
     }
 
 

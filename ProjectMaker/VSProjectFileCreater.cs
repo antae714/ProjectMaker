@@ -241,7 +241,7 @@ internal class VSProjectFileCreater
 
         // ItemGroup elements for source files
         sb.AppendLine("\t<ItemGroup>");
-        sb.AppendLine($"\t\t<ClInclude Include=\"../Includes\\{module.Name}\\{module.Name}pch.h\" />");
+
         foreach (var item in module.Headers)
         {
             sb.AppendLine($"\t\t<ClInclude Include=\"../../{RelaiveDirectory}{item}\" />");
