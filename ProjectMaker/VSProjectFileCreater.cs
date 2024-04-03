@@ -77,7 +77,8 @@ internal class VSProjectFileCreater
             // PropertyGroup elements for configurations
             bool IsRelease = config.Name == "Release";
             sb.AppendLine($"\t<PropertyGroup Condition=\"'$(Configuration)|$(Platform)'=='{config.Name}|{config.Platform}'\" Label=\"Configuration\">");
-            string Output = (module.BuildOutput == E_BuildOutput.Application) ? "Application" : (IsRelease ? "StaticLibrary" : "DynamicLibrary");
+            //string Output = (module.BuildOutput == E_BuildOutput.Application) ? "Application" : (IsRelease ? "StaticLibrary" : "DynamicLibrary");
+            string Output = (module.BuildOutput == E_BuildOutput.Application) ? "Application" : (IsRelease ? "DynamicLibrary" : "DynamicLibrary");
             sb.AppendLine($"\t\t<ConfigurationType>{Output}</ConfigurationType>");
             string UseDebugLibraries = IsRelease ? "false" : "true";
             sb.AppendLine($"\t\t<UseDebugLibraries>{UseDebugLibraries}</UseDebugLibraries>");
