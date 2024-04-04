@@ -23,29 +23,35 @@ internal class ProjectMaker
             command = args[0];
         }
 
+        string basePath;
+
+        if (args.Length > 1 && Directory.Exists(args[1]))
+        {
+            basePath = args[1];
+        }
+        else
+        {
+            Console.WriteLine("현재 경로를 사용합니다.");
+            basePath = Directory.GetCurrentDirectory();
+        }
+        
         switch (command.ToLower())
         {
             case "-setup":
-
-                string basePath;
-
-                if (args.Length > 1 && Directory.Exists(args[1]))
-                {
-                    basePath = args[1];
-                }
-                else
-                {
-                    Console.WriteLine("Invalid or missing directory argument. Using current directory instead.");
-                    basePath = Directory.GetCurrentDirectory();
-                }
 
                 ProjectMake(basePath);
 
                 Console.WriteLine("끝");
                 Console.ReadKey();
                 break;
+            
             case "-prebuild":
                 PreBuild();
+                
+                break;
+            case "-postbuild":
+                PostBuild();
+            
                 break;
             default:
                 Console.WriteLine("잘못된 인수입니다. -Setup 또는 -PreBuild를 사용하세요.");
@@ -74,8 +80,11 @@ internal class ProjectMaker
 
     static void PreBuild()
     {
-        Console.WriteLine("-PreBuild합니다. 추가 예정");
+        //Console.WriteLine("-PreBuild. 추가 예정");
     }
-
+    static void PostBuild()
+    {
+        //Console.WriteLine("-PostBuild. 추가 예정");
+    }
 
 }

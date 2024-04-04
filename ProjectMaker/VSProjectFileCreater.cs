@@ -222,15 +222,24 @@ internal class VSProjectFileCreater
                 {
                     sb.Append($"{item}.lib;");
                 }
+                foreach (var item in module.ExternalDllNames)
+                {
+                    sb.Append($"{item};");
+                }
                 sb.AppendLine($"%(AdditionalDependencies)</AdditionalDependencies>");
             }
 
             sb.AppendLine($"\t</Link>");
 
 
+
             sb.AppendLine($"    <PreBuildEvent>");
-            sb.AppendLine($"      <Command>$(SolutionDir)ProjectMaker.exe -prebuild</Command>");
+            sb.AppendLine($"      <Command>$(SolutionDir){AppDomain.CurrentDomain.FriendlyName} -prebuild</Command>");
             sb.AppendLine($"    </PreBuildEvent>");
+
+            sb.AppendLine($"    <PostBuildEvent>");
+            sb.AppendLine($"      <Command>$(SolutionDir){AppDomain.CurrentDomain.FriendlyName} -postbuild</Command>");
+            sb.AppendLine($"    </PostBuildEvent>");
 
 
             sb.AppendLine($"\t</ItemDefinitionGroup>");
