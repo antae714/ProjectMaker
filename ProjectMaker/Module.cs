@@ -27,6 +27,7 @@ class Module
     public Guid GUID { get; set; }
     public E_BuildOutput BuildOutput { get; set; }
 
+    public List<string> LinkModuleDirectory = new List<string>();
     public List<string> LinkModuleName => SerializeData.LinkModuleName;
     public List<string> ExternalDllNames => SerializeData.ExternalDllNames;
     public List<string> ExternalDllPaths => SerializeData.ExternalDllPaths;

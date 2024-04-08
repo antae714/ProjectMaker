@@ -120,21 +120,28 @@ internal class VSProjectFileCreater
             //    <IncludePath>$(SolutionDir)Source\Core\;$(IncludePath)</IncludePath>
             sb.Append("    <IncludePath>");
 
+            string moduleRelativeDirctory = ModuleScanner.GetRelativePath(module.RootDirectory, module.Directory);
 
-            sb.Append($"$(SolutionDir)Source\\{module.Name}\\;");
-            sb.Append($"$(SolutionDir)Source\\{module.Name}\\Private\\;");
-            sb.Append($"$(SolutionDir)Source\\{module.Name}\\Public\\;");
+            sb.Append($"$(SolutionDir){moduleRelativeDirctory}\\;");
+            sb.Append($"$(SolutionDir){moduleRelativeDirctory}\\Private\\;");
+            sb.Append($"$(SolutionDir){moduleRelativeDirctory}\\Public\\;");
             sb.Append($"$(SolutionDir)Intermediate\\Includes\\{module.Name}\\;");
 
             sb.AppendLine("$(IncludePath)</IncludePath>");
 
             sb.Append($"\t\t<ExternalIncludePath>");
 
+            for (int i = 0; i < module.LinkModuleName.Count; i++)
+            {
+                string linkedModuleRelativeDirctory = ModuleScanner.GetRelativePath(module.RootDirectory, module.LinkModuleDirectory[i]);
+                sb.Append($"$(SolutionDir){linkedModuleRelativeDirctory}Public\\;");
+            }
+
+
             foreach (var item in module.LinkModuleName)
             {
-                //sb.Append($"$(SolutionDir){item}\\;");
-                //sb.Append($"$(SolutionDir){item}\\Private\\;");
-                sb.Append($"$(SolutionDir)Source\\{item}\\Public\\;");
+
+
             }
             if (module.ExternalDllPaths.Count != 0)
             {
@@ -326,7 +333,8 @@ internal class VSProjectFileCreater
         sb.AppendLine("  <ItemGroup>");
 		foreach (var sourceFile in sourceFiles)
 		{
-			sb.AppendLine($"    <ClCompile Include=\"../../Source/{module.Name}/{sourceFile.FilePath}\">");
+            string moduleRelativeDirctory = ModuleScanner.GetRelativePath(module.RootDirectory, module.Directory);
+            sb.AppendLine($"    <ClCompile Include=\"../../{moduleRelativeDirctory}{sourceFile.FilePath}\">");
 			if (sourceFile.Filter != "")
 			{
 				sb.AppendLine($"      <Filter>{sourceFile.Filter}</Filter>");
@@ -338,8 +346,9 @@ internal class VSProjectFileCreater
 		sb.AppendLine("  <ItemGroup>");
 
 		foreach (var headerFile in headerFiles)
-		{
-			sb.AppendLine($"    <ClInclude Include=\"../../Source/{module.Name}/{headerFile.FilePath}\">");
+        {
+            string moduleRelativeDirctory = ModuleScanner.GetRelativePath(module.RootDirectory, module.Directory);
+            sb.AppendLine($"    <ClInclude Include=\"../../{moduleRelativeDirctory}{headerFile.FilePath}\">");
 			if (headerFile.Filter != "")
 			{
 				sb.AppendLine($"      <Filter>{headerFile.Filter}</Filter>");

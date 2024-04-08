@@ -21,9 +21,25 @@ internal class ModuleScanner
 
             Modules.Add(CreateModule(rootDirectory, moduleDirectory));
         }
+        PostScanModules();
+
     }
 
-    private Module CreateModule(string RootDirectory, string Directory)
+
+
+    public void PostScanModules()
+    {
+        foreach (var module in Modules)
+        {
+            var linkedModules = Modules.Where(m => module.LinkModuleName.Contains(m.Name));
+            foreach (var linkedModule in linkedModules)
+            {
+                module.LinkModuleDirectory.Add(linkedModule.Directory);
+            }
+        }
+    }
+
+        private Module CreateModule(string RootDirectory, string Directory)
     {
         var files = System.IO.Directory.EnumerateFiles(Directory, "*", SearchOption.AllDirectories);
 
