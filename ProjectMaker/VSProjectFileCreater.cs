@@ -196,13 +196,7 @@ internal class VSProjectFileCreater
 
 			sb.AppendLine($"\t<Link>");
 
-
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            ///콘솔 플젝용
-            string subsystem = module.BuildOutput == E_BuildOutput.Application ? "CONSOLE" : "Windows";
-            /////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-            
-            sb.AppendLine($"\t\t<SubSystem>{subsystem}</SubSystem>");
+            sb.AppendLine($"\t\t<SubSystem>Windows</SubSystem>");
 
             if (!IsRelease)
             {

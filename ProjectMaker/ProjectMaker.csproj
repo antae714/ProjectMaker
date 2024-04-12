@@ -261,7 +261,6 @@
   <ItemGroup>
     <Compile Include="Module.cs" />
     <Compile Include="ModuleScanner.cs" />
-    <Compile Include="Program.cs" />
     <Compile Include="ProjectMaker.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="VSProject.cs" />
