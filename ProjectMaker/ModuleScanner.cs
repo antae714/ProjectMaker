@@ -55,7 +55,7 @@ internal class ModuleScanner
             {
                 sources.Add(GetRelativePath(Directory, file));
             }
-            else if (extension.Equals(".h", StringComparison.OrdinalIgnoreCase))
+            else if (extension.Equals(".h", StringComparison.OrdinalIgnoreCase) || extension.Equals(".inl", StringComparison.OrdinalIgnoreCase))
             {
                 headers.Add(GetRelativePath(Directory, file));
             }
