@@ -12,8 +12,7 @@ class Module
     public struct SerializedData
     {
         public List<string> LinkModuleName { get; set; }
-        public List<string> ExternalDllNames { get; set; }
-        public List<string> ExternalDllPaths { get; set; }
+        public List<string> ThirdPartyName { get; set; }
         public string BuildOutput { get; set; }
     }
 
@@ -29,8 +28,7 @@ class Module
 
     public List<string> LinkModuleDirectory = new List<string>();
     public List<string> LinkModuleName => SerializeData.LinkModuleName;
-    public List<string> ExternalDllNames => SerializeData.ExternalDllNames;
-    public List<string> ExternalDllPaths => SerializeData.ExternalDllPaths;
+    public List<string> ThirdPartyName => SerializeData.ThirdPartyName;
 
     public void DeserializeData(string moduleFilePath)
     {
@@ -44,11 +42,8 @@ class Module
             if (data.LinkModuleName == null)
                 data.LinkModuleName = new List<string>();
 
-            if (data.ExternalDllNames == null)
-                data.ExternalDllNames = new List<string>();
-
-            if (data.ExternalDllPaths == null)
-                data.ExternalDllPaths = new List<string>();
+            if (data.ThirdPartyName == null)
+                data.ThirdPartyName = new List<string>();
             
             SerializeData = data;
 

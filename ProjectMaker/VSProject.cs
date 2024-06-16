@@ -1,6 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.IO;
 using System.Text;
+using System;
+using Microsoft.Build.Evaluation;
+using System.Linq;
 
 internal class VSSolution
 {
@@ -68,4 +71,21 @@ internal class VSProject
             writer.Write(AutoDefinitions);
         }
     }
+	public IEnumerable<Module> GetLinkModule(List<VSProject> projects)
+	{
+		return from linkModuleName in module.LinkModuleName
+			   from projectElement in projects
+			   where projectElement.module.Name == linkModuleName
+			   select projectElement.module;
+
+	}
+
+	public IEnumerable<Guid> GetLinkModuleGuids(List<VSProject> projects)
+	{
+        return from linkModule in GetLinkModule(projects)
+		       select linkModule.GUID;
+
+	}
+
+
 }

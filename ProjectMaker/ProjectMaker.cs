@@ -63,20 +63,15 @@ internal class ProjectMaker
 
     static void ProjectMake(string basePath)
     {
-        List<VSProject> projects = new List<VSProject>();
+        VSProjectFileCreater projectCreater = new VSProjectFileCreater();
+
         ModuleScanner scanner = new ModuleScanner();
         scanner.ScanModules(basePath);
 
-        foreach (var module in scanner.Modules)
-        {
-            VSProject project = new VSProject();
-            projects.Add(VSProjectFileCreater.CreateProject(module));
-        }
-        VSSolution solution = new VSSolution(Path.Combine(basePath, $"{Path.GetFileName(basePath)}.sln"));
-        solution.projects = projects;
-        VSProjectFileCreater.CreateSolutionContents(solution);
-        solution.Save();
-    }
+		projectCreater.CreateProjects(scanner.Modules);
+		projectCreater.CreateSolutionContents(basePath).Save();
+
+	}
 
     static void PreBuild()
     {
